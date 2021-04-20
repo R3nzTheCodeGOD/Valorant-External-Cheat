@@ -1,5 +1,5 @@
 # R3nzTheCodeGOD Valorant External Cheat
-**[Maybe Fixed]When you take your crosshair to the man, it shoots at the enemy in 6ms.**
+**[UNDEDECTED]When you take your crosshair to the man, it shoots at the enemy in 6ms.**
 ## Download and Using 
 ### I suggest
 - download code `git clone https://github.com/R3nzTheCodeGOD/Valorant-External-Cheat`
