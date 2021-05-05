@@ -21,7 +21,6 @@
 
 ## Keybinds
 - The cheat works as long as you hold down the `Shift` key
-- trigger toggle `ctrl + alt`
 - `ctrl + tab` to switch mode
 - `ctrl + down` to decrease `ctrl + up` to increase the trigger area
 
