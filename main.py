@@ -1,123 +1,136 @@
-import keyboard
-import pyautogui
-import time
-import ctypes
-import PIL.ImageGrab
-import PIL.Image
-import winsound 
-import os
-import mss
+"""
+MIT License
+
+Copyright (c) 2020 Erdem Yılmaz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+__author__: str = 'R3nzTheCodeGOD'
+__version__: str = 'v2.0.0'
+
+from keyboard import is_pressed
+from os import system
+from time import perf_counter, sleep
+from ctypes import windll
+from PIL import ImageGrab, Image
+from winsound import Beep 
+from mss import mss
 from colorama import Fore, Style, init
-S_HEIGHT, S_WIDTH = (PIL.ImageGrab.grab().size)
-PURPLE_R, PURPLE_G, PURPLE_B = (250, 100, 250)
-TOLERANCE = 31
-GRABZONE = 10
-TRIGGER_KEY = "ctrl + alt"
-SWITCH_KEY = "ctrl + tab"
-GRABZONE_KEY_UP = "ctrl + up"
-BUNNY_KEY = "ctrl + space"
-GRABZONE_KEY_DOWN = "ctrl + down"
-mods = ["OPERATOR/MARSHAL", "GUARDIAN", "VANDAL/PHANTOM/SHOTGUNS"]
-pyautogui.FAILSAFE = False
+
+S_HEIGHT, S_WIDTH = (ImageGrab.grab().size)
+GRABZONE: int = 5
+TRIGGER_KEY: str = 'shift'
+SWITCH_KEY: str = 'ctrl + tab'
+GRABZONE_KEY_UP: str = 'ctrl + up'
+GRABZONE_KEY_DOWN: str = 'ctrl + down'
+mods: tuple = ('0.3s Delay', '0.2s Delay', '0.1s Delay', 'No Delay Full-Auto')
  
 class FoundEnemy(Exception):
     pass
  
-class triggerBot():
+class TriggerBot:
     def __init__(self) -> None:
-        self.toggled = False
-        self._bunny = False
-        self.mode = 1
-        self.last_reac = 0
- 
-    def toggle(self) -> None: self.toggled = not self.toggled
-    def bunnyy(self) -> None: self._bunny = not self._bunny
- 
-    def switch(self):
-        if self.mode != 2: self.mode += 1
-        else: self.mode = 0
-        if self.mode == 0: winsound.Beep(200, 200)
-        if self.mode == 1: winsound.Beep(200, 200), winsound.Beep(200, 200)
-        if self.mode == 2: winsound.Beep(200, 200), winsound.Beep(200, 200), winsound.Beep(200, 200)
-
-    def click(self) -> None:
-        ctypes.windll.user32.mouse_event(2, 0, 0, 0,0) # sol bas
-        ctypes.windll.user32.mouse_event(4, 0, 0, 0,0) # sol bırak
+        self._mode: int = 2
+        self._last_reac: int = 0
         
-    def approx(self, r, g ,b) -> bool: return PURPLE_R - TOLERANCE < r < PURPLE_R + TOLERANCE and PURPLE_G - TOLERANCE < g < PURPLE_G + TOLERANCE and PURPLE_B - TOLERANCE < b < PURPLE_B + TOLERANCE
+    def switch(self):
+        if self._mode != 3: self._mode += 1
+        else: self._mode = 0
+
+        if self._mode == 0: Beep(200, 100)
+        elif self._mode == 1: Beep(200, 100), Beep(200, 100)
+        elif self._mode == 2: Beep(200, 100), Beep(200, 100), Beep(200, 100)
+        elif self._mode == 3: Beep(200, 100), Beep(200, 100), Beep(200, 100), Beep(200, 100)
  
-    def grab(self) -> None:
-        with mss.mss() as sct:
-            bbox=(int(S_HEIGHT/2-GRABZONE), int(S_WIDTH/2-GRABZONE), int(S_HEIGHT/2+GRABZONE), int(S_WIDTH/2+GRABZONE))
+    def color_check(self, red: int, green: int, blue: int) -> bool:
+        if green >= 190:
+            return False
+        
+        if green >= 140:
+            return abs(red - blue) <= 8 and red - green >= 50 and blue - green >= 50 and red >= 105 and blue >= 105
+
+        return abs(red - blue) <= 13 and red - green >= 60 and blue - green >= 60 and red >= 110 and blue >= 100
+
+    def grab(self) -> Image:
+        with mss() as sct:
+            bbox: tuple = (int(S_HEIGHT / 2 - GRABZONE), int(S_WIDTH / 2 - GRABZONE), int(S_HEIGHT / 2 + GRABZONE), int(S_WIDTH / 2 + GRABZONE))
             sct_img = sct.grab(bbox)
-            return PIL.Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
+            return Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
     
     def scan(self) -> None:
-        start_time = time.time()
-        pmap = self.grab()
+        start_time: float = perf_counter()
+        pmap: Image = self.grab()
         
         try:
             for x in range(0, GRABZONE*2):
                 for y in range(0, GRABZONE*2):
                     r, g, b = pmap.getpixel((x,y))
-                    if self.approx(r, g, b): raise FoundEnemy
-        except FoundEnemy:
-            self.last_reac = int((time.time() - start_time)*1000)
-            self.click()
-            if self.mode == 0: time.sleep(0.5)
-            if self.mode == 1: time.sleep(0.25)
-            if self.mode == 2: time.sleep(0.2)
-            print_banner(self)
+                    if self.color_check(r, g, b): raise FoundEnemy
 
-    def bunny(self) -> None:
-        while True:
-            if keyboard.is_pressed("space"): pyautogui.press("space")
-            else: break
-def print_banner(bot: triggerBot) -> None:
-    os.system("cls")
-    print(Style.BRIGHT + Fore.CYAN + "R3nzTheCodeGOD Valorant Trigger Bot v1.0.0" + Style.RESET_ALL)
-    print("===== Kontroller =====")
-    print("Aktifleştirme Tuşu   :", Fore.YELLOW + TRIGGER_KEY + Style.RESET_ALL)
-    print("Mod Değiştirme Tuşu  :", Fore.YELLOW + SWITCH_KEY + Style.RESET_ALL)
-    print("Yakalama Alanı Ayar  :", Fore.YELLOW + GRABZONE_KEY_UP + "/" + GRABZONE_KEY_DOWN + Style.RESET_ALL)
-    print("==== Bilgilendirme ===")
-    print("Mod                  :", Fore.CYAN + mods[bot.mode] + Style.RESET_ALL)
-    print("Yakalama Alanı       :", Fore.CYAN + str(GRABZONE) + "x" + str(GRABZONE) + Style.RESET_ALL)
-    print("Trigger Durumu       :", (Fore.GREEN if bot.toggled else Fore.RED) + ("Açık" if bot.toggled else "Kapalı") + Style.RESET_ALL)
-    print("Bunny Durumu         :", (Fore.GREEN if bot._bunny else Fore.RED) + ("Açık" if bot._bunny else "Kapalı") + Style.RESET_ALL)
-    print("Son Reaksiyon Süresi :", Fore.CYAN + str(bot.last_reac) + Style.RESET_ALL + " ms ("+str((bot.last_reac)/(GRABZONE*GRABZONE))+"ms/pix)")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        except FoundEnemy:
+            self._last_reac = int((perf_counter() - start_time)*1000)
+
+            windll.user32.mouse_event(2, 0, 0, 0, 0)
+            windll.user32.mouse_event(4, 0, 0, 0, 0)
+
+            if self._mode == 0: sleep(0.3)
+            elif self._mode == 1: sleep(0.2)
+            elif self._mode == 2: sleep(0.1)
+            elif self._mode == 3: pass
+
+def print_banner(bot: TriggerBot) -> None:
+    system('cls')
+    print(Style.BRIGHT + Fore.CYAN + f'{__author__} Valorant External Cheat {__version__}' + Style.RESET_ALL)
+    print('====== Controls ======')
+    print('Trigger Key          :', Fore.YELLOW + TRIGGER_KEY + Style.RESET_ALL)
+    print('Mode Chage Key       :', Fore.YELLOW + SWITCH_KEY + Style.RESET_ALL)
+    print('Grab Zone Change Key :', Fore.YELLOW + GRABZONE_KEY_UP + '/' + GRABZONE_KEY_DOWN + Style.RESET_ALL)
+    print('===== Information ====')
+    print('Mode                 :', Fore.CYAN + mods[bot._mode] + Style.RESET_ALL)
+    print('Grab Zone            :', Fore.CYAN + str(GRABZONE) + 'x' + str(GRABZONE) + Style.RESET_ALL)
+    print('Trigger Status       :', Fore.GREEN + f'Hold down the "{TRIGGER_KEY}" key' + Style.RESET_ALL)
+    print('Last React Time      :', Fore.CYAN + str(bot._last_reac) + Style.RESET_ALL + ' ms (' + str((bot._last_reac)/(GRABZONE*GRABZONE)) + 'ms/pix)')
+
 if __name__ == "__main__":
-    bot = triggerBot()
+    print('e340d4e42d032023127fcd4a42ea34349fc0b00b982047ad614d405fc2cd1168')
+    init()
+    system('@echo off')
+    system('cls')
+    bot = TriggerBot()
     print_banner(bot)
+
     while True:
-        if keyboard.is_pressed(SWITCH_KEY):
+        if is_pressed(SWITCH_KEY):
             bot.switch()
             print_banner(bot)
-            while keyboard.is_pressed(SWITCH_KEY): pass
-        if keyboard.is_pressed(GRABZONE_KEY_UP):
-            GRABZONE += 5
-            print_banner(bot)
-            winsound.Beep(400, 200)
-            while keyboard.is_pressed(GRABZONE_KEY_UP): pass
-        if keyboard.is_pressed(GRABZONE_KEY_DOWN):
-            GRABZONE -= 5
-            print_banner(bot)
-            winsound.Beep(300, 200)
-            while keyboard.is_pressed(GRABZONE_KEY_DOWN): pass
-        if keyboard.is_pressed(TRIGGER_KEY):
-            bot.toggle()
-            print_banner(bot)
-            if bot.toggled: winsound.Beep(440, 75), winsound.Beep(700, 100)
-            else: winsound.Beep(440, 75), winsound.Beep(200, 100)
-            while keyboard.is_pressed(TRIGGER_KEY): pass
-        if keyboard.is_pressed(BUNNY_KEY): 
-            bot.bunnyy()
-            print_banner(bot)
-            if bot._bunny: winsound.Beep(440, 75), winsound.Beep(700, 100)
-            else: winsound.Beep(440, 75), winsound.Beep(200, 100)
-            while keyboard.is_pressed(BUNNY_KEY): pass
 
-        if bot.toggled: bot.scan()
-        if bot._bunny:
-            if keyboard.is_pressed("space"): bot.bunny()
+        if is_pressed(GRABZONE_KEY_UP):
+            GRABZONE += 1
+            print_banner(bot)
+            Beep(400, 100)
+
+        if is_pressed(GRABZONE_KEY_DOWN):
+            if GRABZONE != 1: GRABZONE -= 1
+            print_banner(bot)
+            Beep(300, 100)
+
+        if is_pressed(TRIGGER_KEY):
+            bot.scan()
+            print_banner(bot)
