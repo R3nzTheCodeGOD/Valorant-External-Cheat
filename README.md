@@ -15,14 +15,13 @@
 
 ## Game Settings and Note
 - **You have to play the game in `purple colorblind mode`**
-- **The cheat works as long as you hold down the `Shift` key.**
 
 ## Ban Risk
 - 6 months no one has been banned by this cheat
 
 ## Keybinds
+- The cheat works as long as you hold down the `Shift` key
 - trigger toggle `ctrl + alt`
-- bunnyhop toggle `ctrl + space`
 - `ctrl + tab` to switch mode
 - `ctrl + down` to decrease `ctrl + up` to increase the trigger area
 
