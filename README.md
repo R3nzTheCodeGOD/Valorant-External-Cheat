@@ -1,5 +1,6 @@
 # R3nzTheCodeGOD Valorant External Cheat
-**[UNDEDECTED] When you take your crosshair to the man, it shoots at the enemy in 5ms.**
+- **Status:** `UNDEDECTED`
+- **When you take your crosshair to the man, it shoots at the enemy in 5ms.**
 
 ## Download and Using 
 
@@ -11,7 +12,7 @@
 
 ### second method / easy but I don't recommend
 - download the latest version [here](https://github.com/R3nzTheCodeGOD/Valorant-External-Cheat/releases)
-- run `r3nzthecodegod.exe`
+- run `R3nzVal.exe`
 
 ## Game Settings and Note
 - **You have to play the game in `purple colorblind mode`**
@@ -25,6 +26,9 @@
 - `ctrl + down` to decrease `ctrl + up` to increase the trigger area
 
 ## Changelog
+### Version v2.0.1
+- Keyboard input lag issue fixed
+- New sha256 hash system
 ### Version v2.0.0
 - Increased performance, faster reaction time.
 - Higher Security
