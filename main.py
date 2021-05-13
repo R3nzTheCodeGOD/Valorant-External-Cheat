@@ -134,3 +134,6 @@ if __name__ == "__main__":
         if is_pressed(TRIGGER_KEY):
             bot.scan()
             print_banner(bot)
+        sleep(0.001) # loop with keyboard.is_pressed causing input lag
+        """Keyboard kütüphanesi çok fazla threding işlemi ve for döngüsü yapıyor. 
+        Hızlı bilgisayarlarda fazla girilen while döngüsü problem oluşturuyor."""
