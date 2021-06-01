@@ -34,17 +34,17 @@ from hashlib import sha256
 from random import random
 
 
-__author__: str = 'R3nzTheCodeGOD'
-__version__: str = 'v2.0.1'
+__author__   = 'R3nzTheCodeGOD'
+__version__  = 'v2.0.2'
 
 
-S_HEIGHT, S_WIDTH = ImageGrab.grab().size
-GRABZONE: int = 5
-TRIGGER_KEY: str = 'shift'
-SWITCH_KEY: str = 'ctrl + tab'
-GRABZONE_KEY_UP: str = 'ctrl + up'
-GRABZONE_KEY_DOWN: str = 'ctrl + down'
-mods: tuple = ('0.3s Delay', '0.2s Delay', '0.1s Delay', 'No Delay Full-Auto')
+S_HEIGHT, S_WIDTH  = ImageGrab.grab().size
+GRABZONE           = 0x5
+TRIGGER_KEY        = 'shift'
+SWITCH_KEY         = 'ctrl + tab'
+GRABZONE_KEY_UP    = 'ctrl + up'
+GRABZONE_KEY_DOWN  = 'ctrl + down'
+MODS               = ('0.3s Delay', '0.25s Delay', '0.2s Delay', '0.15s Delay', '0.1s Delay', 'No Delay Full-Auto')
 
 
 class FoundEnemy(Exception):
@@ -52,47 +52,52 @@ class FoundEnemy(Exception):
 
 
 class TriggerBot:
-    def __init__(self) -> None:
-        self._mode: int = 2
-        self._last_reac: int = 0
 
-    def switch(self):
-        if self._mode != 3: self._mode += 1
-        else: self._mode = 0
-        if self._mode == 0: Beep(200, 100)
-        elif self._mode == 1: Beep(200, 100), Beep(200, 100)
-        elif self._mode == 2: Beep(200, 100), Beep(200, 100), Beep(200, 100)
-        elif self._mode == 3: Beep(200, 100), Beep(200, 100), Beep(200, 100), Beep(200, 100)
+    def __init__(self) -> None:
+        self._mode       = 0x1
+        self._last_reac  = 0x0
+
+
+    def switch(self) -> None:
+        Beep(0xC8, 0x64)
+        if self._mode != 0x5: self._mode += 0x1
+        else: self._mode = 0x0
+
 
     def color_check(self, red: int, green: int, blue: int) -> bool:
-        if green >= 190: return False
-        if green >= 140: return abs(red - blue) <= 8 and red - green >= 50 and blue - green >= 50 and red >= 105 and blue >= 105
-        return abs(red - blue) <= 13 and red - green >= 60 and blue - green >= 60 and red >= 110 and blue >= 100
+        if green >= 0xAA: return False
+        if green >= 0x78: return abs(red - blue) <= 0x8 and red - green >= 0x32 and blue - green >= 0x32 and red >= 0x69 and blue >= 0x69
+        
+        return abs(red - blue) <= 0xD and red - green >= 0x3C and blue - green >= 0x3C and red >= 0x6E and blue >= 0x64
+
 
     def grab(self) -> Image:
         with mss() as sct:
-            bbox: tuple = (int(S_HEIGHT / 2 - GRABZONE), int(S_WIDTH / 2 - GRABZONE), int(S_HEIGHT / 2 + GRABZONE), int(S_WIDTH / 2 + GRABZONE))
-            sct_img = sct.grab(bbox)
+            bbox     = (int(S_HEIGHT / 0x2 - GRABZONE), int(S_WIDTH / 0x2 - GRABZONE), int(S_HEIGHT / 0x2 + GRABZONE), int(S_WIDTH / 0x2 + GRABZONE))
+            sct_img  = sct.grab(bbox)
             return Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 
+
     def scan(self) -> None:
-        start_time: float = perf_counter()
-        pmap: Image = self.grab()
+        start_time  = perf_counter()
+        pmap        = self.grab()
 
         try:
-            for x in range(0, GRABZONE * 2):
-                for y in range(0, GRABZONE * 2):
+            for x in range(0x0, GRABZONE * 0x2):
+                for y in range(0x0, GRABZONE * 0x2):
                     r, g, b = pmap.getpixel((x, y))
                     if self.color_check(r, g, b): raise FoundEnemy
         
         except FoundEnemy:
-            self._last_reac = int((perf_counter() - start_time) * 1000)
-            windll.user32.mouse_event(2, 0, 0, 0, 0), windll.user32.mouse_event(4, 0, 0, 0, 0)
+            self._last_reac = int((perf_counter() - start_time) * 0x3E8)
+            windll.user32.mouse_event(0x2, 0x0, 0x0, 0x0, 0x0), windll.user32.mouse_event(0x4, 0x0, 0x0, 0x0, 0x0)
 
-            if self._mode == 0: sleep(0.3)
-            elif self._mode == 1: sleep(0.2)
-            elif self._mode == 2: sleep(0.1)
-            elif self._mode == 3: pass
+            if self._mode == 0x0: sleep(0.3)
+            elif self._mode == 0x1: sleep(0.25)
+            elif self._mode == 0x2: sleep(0.2)
+            elif self._mode == 0x3: sleep(0.15)
+            elif self._mode == 0x4: sleep(0.1)
+            elif self._mode == 0x5: pass
 
 
 def print_banner(bot: TriggerBot) -> None:
@@ -103,30 +108,36 @@ def print_banner(bot: TriggerBot) -> None:
     print('Mode Change Key      :', Fore.YELLOW + SWITCH_KEY + Style.RESET_ALL)
     print('Grab Zone Change Key :', Fore.YELLOW + GRABZONE_KEY_UP + '/' + GRABZONE_KEY_DOWN + Style.RESET_ALL)
     print('===== Information ====')
-    print('Mode                 :', Fore.CYAN + mods[bot._mode] + Style.RESET_ALL)
-    print('Grab Zone            :', Fore.CYAN + str(GRABZONE) + 'x' + str(GRABZONE) + Style.RESET_ALL)
+    print('Mode                 :', Fore.CYAN  + MODS[bot._mode] + Style.RESET_ALL)
+    print('Grab Zone            :', Fore.CYAN  + str(GRABZONE) + 'x' + str(GRABZONE) + Style.RESET_ALL)
     print('Trigger Status       :', Fore.GREEN + f'Hold down the "{TRIGGER_KEY}" key' + Style.RESET_ALL)
-    print('Last React Time      :', Fore.CYAN + str(bot._last_reac) + Style.RESET_ALL + ' ms (' + str((bot._last_reac)/(GRABZONE * GRABZONE)) + 'ms/pix)')
+    print('Last React Time      :', Fore.CYAN  + str(bot._last_reac) + Style.RESET_ALL + ' ms (' + str((bot._last_reac) / (GRABZONE * GRABZONE)) + 'ms/pix)')
 
 
 if __name__ == "__main__":
-    _hash: str = sha256(f'{random()}'.encode('utf-8')).hexdigest()
+    _hash = sha256(f'{random()}'.encode('utf-8')).hexdigest()
     print(_hash), system(f'title {_hash}'), sleep(0.5), init(), system('@echo off'), system('cls')
     bot = TriggerBot()
     print_banner(bot)
 
-    while True:
-        if is_pressed(SWITCH_KEY): bot.switch(), print_banner(bot)
+    while 0x1:
+        if is_pressed(SWITCH_KEY):
+            bot.switch()
+            print_banner(bot)
+            continue
 
         if is_pressed(GRABZONE_KEY_UP):
-            GRABZONE += 1
-            print_banner(bot), Beep(400, 100)   
+            GRABZONE += 0x1
+            print_banner(bot), Beep(0x190, 0x64) 
+            continue  
 
         if is_pressed(GRABZONE_KEY_DOWN):
-            if GRABZONE != 1: GRABZONE -= 1
-            print_banner(bot), Beep(300, 100)
+            if GRABZONE != 0x1: GRABZONE -= 0x1
+            print_banner(bot), Beep(0x12C, 0x64)
+            continue
 
         if is_pressed(TRIGGER_KEY):
             bot.scan(), print_banner(bot)
+            continue
 
-        sleep(0.001) # [Fix input lag] Contributing: https://github.com/atakanhr
+        sleep(0.001)

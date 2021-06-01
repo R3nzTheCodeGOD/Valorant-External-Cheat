@@ -16,6 +16,7 @@
 
 ## Game Settings and Note
 - **You have to play the game in `purple colorblind mode`**
+- **if it doesn't work in fullscreen try it in fullscreen windowed mode**
 
 ## Ban Risk
 - 6 months no one has been banned by this cheat
@@ -26,6 +27,10 @@
 - `ctrl + down` to decrease `ctrl + up` to increase the trigger area
 
 ## Changelog
+### Version v2.0.2
+- 1ms performance boost
+- Purple color update
+- 2 new mode
 ### Version v2.0.1
 - Keyboard input lag issue fixed
 - New sha256 hash system
