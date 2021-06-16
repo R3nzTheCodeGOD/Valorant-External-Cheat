@@ -4,6 +4,11 @@
     <i>R3nzTheCodeGOD Valorant External Cheat</i>
 </p>
 
+![Badge](https://img.shields.io/badge/game-valorant-dc3d4b)
+![Badge](https://img.shields.io/badge/verified%20ban-0-ff0000)
+![Badge](https://img.shields.io/badge/OS-windows-00ff00)
+![Badge](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8%20|%203.9-3776ab)
+
 # **R3nzTheCodeGOD Valorant External Cheat**
 - **Status:** `UNDEDECTED`
 - **The Cheat that hits the opponents approaching the barrel in an average of 5ms.**
