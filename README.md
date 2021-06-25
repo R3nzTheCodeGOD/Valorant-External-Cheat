@@ -7,7 +7,7 @@
 <div align="center">
     
 ![Badge](https://img.shields.io/badge/game-valorant-dc3d4b)
-![Badge](https://img.shields.io/badge/verified%20ban-0-ff0000)
+![Badge](https://img.shields.io/badge/verified%20ban-1-ff0000)
 ![Badge](https://img.shields.io/badge/OS-windows-00ff00)
 ![Badge](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8%20|%203.9-3776ab)
 
@@ -47,8 +47,6 @@
 - `ctrl + tab` to switch mode
 - `ctrl + down` to decrease `ctrl + up` to increase the trigger area
 
-## **Ban Risk**
-- 6 months no one has been banned by this cheat
 
 ## **Changelog**
 
