@@ -7,7 +7,7 @@
 <div align="center">
     
 ![Badge](https://img.shields.io/badge/game-valorant-dc3d4b)
-![Badge](https://img.shields.io/badge/verified%20ban-1-ff0000)
+![Badge](https://img.shields.io/badge/verified%20ban-10-ff0000)
 ![Badge](https://img.shields.io/badge/OS-windows-00ff00)
 ![Badge](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8%20|%203.9-3776ab)
 
@@ -15,7 +15,7 @@
 
 
 # **R3nzTheCodeGOD Valorant External Cheat**
-- **Status:** `UNDEDECTED`
+- **Status:** `DEDECTED`
 - **The Cheat that hits the opponents approaching the barrel in an average of 5ms.**
 
 ## **Download and Using** 
@@ -46,7 +46,6 @@
 - The cheat comes in `Toggle Key` mode by default and can be turned on or off with the `F6` key.
 - `ctrl + tab` to switch mode
 - `ctrl + down` to decrease `ctrl + up` to increase the trigger area
-
 
 ## **Changelog**
 
